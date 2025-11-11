@@ -12,6 +12,7 @@ import { Label } from '../components/ui/label'
 import { Badge } from '../components/ui/badge'
 import { Moon, Sun, User, MessageSquare } from 'lucide-react'
 import { SocialFeedABI, CONTRACT_ADDRESS } from '../contracts/SocialFeedABI'
+import { toast } from 'sonner'
 
 export default function Home() {
   const [postContent, setPostContent] = useState('')
@@ -45,7 +46,7 @@ export default function Home() {
 
   useEffect(() => {
     if (isConfirmed) {
-      alert('Transaction completed successfully!')
+      toast.success('Transaction completed successfully!')
       setTxHash(undefined)
       setShowProfile(false)
       setRefreshKey(prev => prev + 1) // Trigger feed refresh
@@ -70,7 +71,7 @@ export default function Home() {
 
   const createPost = async () => {
     if (!address || !postContent.trim()) {
-      alert('Please enter post content!')
+      toast.error('Please enter post content!')
       return
     }
     console.log('Creating post with content:', postContent)
@@ -89,7 +90,7 @@ export default function Home() {
       setPostContent('')
     } catch (error) {
       console.error('Full error object:', error)
-      alert(`Error creating post: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      toast.error(`Error creating post: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
 
@@ -106,7 +107,7 @@ export default function Home() {
       setTxHash(hash)
     } catch (error) {
       console.error('Profile update error:', error)
-      alert(`Error updating profile: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      toast.error(`Error updating profile: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
 
