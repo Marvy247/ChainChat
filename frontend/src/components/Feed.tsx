@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useReadContract, useAccount } from 'wagmi'
+import { useReadContract, useAccount, useWriteContract } from 'wagmi'
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Badge } from '../components/ui/badge'
 import { Button } from '../components/ui/button'
@@ -23,6 +23,7 @@ export default function Feed({ refreshKey }: { refreshKey: number }) {
   const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set())
   const [following, setFollowing] = useState<Set<string>>(new Set())
   const { address } = useAccount()
+  const { writeContractAsync } = useWriteContract()
 
   const { data: postsData, refetch: refetchPosts } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -107,14 +108,26 @@ export default function Feed({ refreshKey }: { refreshKey: number }) {
       // Check if already liked
       const isLiked = likedPosts.has(postId)
       if (isLiked) {
-        // Unlike
+        // Unlike - call unlikePost function
+        await writeContractAsync({
+          address: CONTRACT_ADDRESS,
+          abi: SocialFeedABI,
+          functionName: 'unlikePost',
+          args: [BigInt(postId)],
+        })
         setLikedPosts(prev => {
           const newSet = new Set(prev)
           newSet.delete(postId)
           return newSet
         })
       } else {
-        // Like
+        // Like - call likePost function
+        await writeContractAsync({
+          address: CONTRACT_ADDRESS,
+          abi: SocialFeedABI,
+          functionName: 'likePost',
+          args: [BigInt(postId)],
+        })
         setLikedPosts(prev => new Set(prev).add(postId))
       }
       refetchPosts()
@@ -146,19 +159,19 @@ export default function Feed({ refreshKey }: { refreshKey: number }) {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-900">
       {/* Chat Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between shadow-sm">
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
             <span className="text-white font-bold text-sm">S</span>
           </div>
           <div>
-            <h1 className="text-lg font-semibold text-gray-900">Social Chat</h1>
-            <p className="text-xs text-gray-500">SDS Powered • {posts.length} messages</p>
+            <h1 className="text-lg font-semibold text-gray-900 dark:text-white">Social Chat</h1>
+            <p className="text-xs text-gray-500 dark:text-gray-400">SDS Powered • {posts.length} messages</p>
           </div>
         </div>
-        <Badge variant="secondary" className="text-xs bg-green-100 text-green-700">Online</Badge>
+        <Badge variant="secondary" className="text-xs bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">Online</Badge>
       </div>
 
       {/* Chat Messages */}
@@ -166,11 +179,11 @@ export default function Feed({ refreshKey }: { refreshKey: number }) {
         {posts.length === 0 ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
-              <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                <MessageCircle className="w-8 h-8 text-gray-400" />
+              <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                <MessageCircle className="w-8 h-8 text-gray-400 dark:text-gray-500" />
               </div>
-              <p className="text-gray-500 text-lg">No messages yet</p>
-              <p className="text-gray-400 text-sm">Be the first to start the conversation!</p>
+              <p className="text-gray-500 dark:text-gray-400 text-lg">No messages yet</p>
+              <p className="text-gray-400 dark:text-gray-500 text-sm">Be the first to start the conversation!</p>
             </div>
           </div>
         ) : (
@@ -186,8 +199,8 @@ export default function Feed({ refreshKey }: { refreshKey: number }) {
                 <div className={`max-w-xs sm:max-w-md lg:max-w-lg ${isOwnPost ? 'order-1' : 'order-2'}`}>
                   {!isOwnPost && (
                     <div className="flex items-center gap-2 mb-1 px-3">
-                      <span className="text-xs font-medium text-gray-700">{post.author.slice(0, 6)}...{post.author.slice(-4)}</span>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{post.author.slice(0, 6)}...{post.author.slice(-4)}</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
                         {new Date(Number(post.timestamp) * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                       </span>
                     </div>
@@ -195,7 +208,7 @@ export default function Feed({ refreshKey }: { refreshKey: number }) {
                   <div className={`px-4 py-3 rounded-2xl shadow-sm ${
                     isOwnPost
                       ? 'bg-blue-500 text-white rounded-br-md'
-                      : 'bg-white text-gray-800 rounded-bl-md border border-gray-200'
+                      : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-bl-md border border-gray-200 dark:border-gray-600'
                   }`}>
                     <p className="text-sm leading-relaxed">{post.content}</p>
                   </div>
@@ -220,7 +233,7 @@ export default function Feed({ refreshKey }: { refreshKey: number }) {
                       </Button>
                     </div>
                     {isOwnPost && (
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
                         {new Date(Number(post.timestamp) * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                       </span>
                     )}
@@ -231,7 +244,7 @@ export default function Feed({ refreshKey }: { refreshKey: number }) {
                         size="sm"
                         variant="ghost"
                         onClick={() => handleFollow(post.author)}
-                        className="h-6 px-2 text-xs text-gray-500 hover:text-blue-500 hover:bg-transparent"
+                        className="h-6 px-2 text-xs text-gray-500 dark:text-gray-400 hover:text-blue-500 hover:bg-transparent"
                       >
                         {following.has(post.author) ? <UserMinus className="w-3 h-3" /> : <UserPlus className="w-3 h-3" />}
                         <span className="ml-1">{following.has(post.author) ? 'Unfollow' : 'Follow'}</span>

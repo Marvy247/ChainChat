@@ -112,7 +112,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white flex items-center justify-center p-4 transition-colors duration-300 pt-20">
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black dark:from-gray-900 dark:via-gray-800 dark:to-black text-white flex items-center justify-center p-4 transition-colors duration-300 pt-20">
       <div className="flex flex-col lg:flex-row gap-8 max-w-7xl">
         <div className="flex flex-col gap-4">
           <Card className="w-full lg:w-[600px]">
@@ -123,6 +123,13 @@ export default function Home() {
               </CardTitle>
             </CardHeader>
             <CardContent>
+              {username && (
+                <div className="mb-6 p-3 bg-gray-800 dark:bg-gray-700 rounded-lg">
+                  <div className="font-semibold text-white dark:text-gray-100">{username}</div>
+                  {bio && <div className="text-sm text-gray-400 dark:text-gray-300 mt-1">{bio}</div>}
+                </div>
+              )}
+
               {/* Post Creation Input */}
               <div className="mb-6">
                 <Textarea
@@ -188,13 +195,6 @@ export default function Home() {
                   </DialogContent>
                 </Dialog>
               </div>
-
-              {username && (
-                <div className="mb-4 p-3 bg-gray-800 rounded-lg">
-                  <div className="font-semibold">{username}</div>
-                  {bio && <div className="text-sm text-gray-400 mt-1">{bio}</div>}
-                </div>
-              )}
 
               <p className="text-sm text-gray-400">
                 Real-time social interactions powered by Somnia Data Streams. All posts, likes, and follows are stored immutably on-chain.
