@@ -58,7 +58,7 @@ export default function Home() {
       <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle className="text-center">Welcome to Reactive Social Feed</CardTitle>
+          <CardTitle className="text-center">Welcome to ChainChat</CardTitle>
           </CardHeader>
           <CardContent className="text-center">
             <p className="mb-4">Connect your wallet to start interacting on the blockchain social platform!</p>
@@ -117,8 +117,8 @@ export default function Home() {
         <div className="flex flex-col gap-4">
           <Card className="w-full lg:w-[600px]">
             <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <span>Reactive Social Feed</span>
+            <CardTitle className="flex items-center justify-between">
+                <span>ChainChat</span>
                 <Badge variant="secondary" className="text-xs">SDS Powered</Badge>
               </CardTitle>
             </CardHeader>

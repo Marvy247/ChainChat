@@ -167,7 +167,7 @@ export default function Feed({ refreshKey }: { refreshKey: number }) {
             <span className="text-white font-bold text-sm">S</span>
           </div>
           <div>
-            <h1 className="text-lg font-semibold text-gray-900 dark:text-white">Social Chat</h1>
+            <h1 className="text-lg font-semibold text-gray-900 dark:text-white">ChainChat</h1>
             <p className="text-xs text-gray-500 dark:text-gray-400">SDS Powered • {posts.length} messages</p>
           </div>
         </div>

@@ -1,4 +1,4 @@
-# Reactive Social Feed - Somnia Data Streams Hackathon Submission
+# ChainChat - Somnia Data Streams Hackathon Submission
 
 A real-time social media platform built on Somnia Testnet, showcasing the power of Somnia Data Streams (SDS) for instant, reactive on-chain social interactions.
 

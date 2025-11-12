@@ -3,8 +3,8 @@ import "./globals.css";
 import ClientLayout from "./client-layout";
 
 export const metadata: Metadata = {
-  title: "Battle Arena",
-  description: "Real-time blockchain battle arena game on Somnia Testnet",
+  title: "ChainChat",
+  description: "Real-time blockchain social platform on Somnia Testnet",
 };
 
 export default function RootLayout({
