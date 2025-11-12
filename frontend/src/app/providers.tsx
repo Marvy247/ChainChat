@@ -7,7 +7,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { somniaTestnet } from '../lib/somnia'
 
 const config = getDefaultConfig({
-  appName: 'Battle Arena',
+  appName: 'ChainChat',
   projectId: 'demo', // Replace with actual project ID
   chains: [somniaTestnet],
   ssr: true,
