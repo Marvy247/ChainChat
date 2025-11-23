@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useWriteContract, useAccount, useReadContract, useWaitForTransactionReceipt } from 'wagmi'
 import Feed from '../components/Feed'
+import SDSStatusIndicator from '../components/SDSStatusIndicator'
 import { Button } from '../components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog'
@@ -21,10 +22,17 @@ export default function Home() {
   const [bio, setBio] = useState('')
   const [txHash, setTxHash] = useState<`0x${string}` | undefined>()
   const [refreshKey, setRefreshKey] = useState(0)
+  const [sdsConnected, setSdsConnected] = useState(true)
   const { address } = useAccount()
   const { writeContractAsync, isPending } = useWriteContract()
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash: txHash,
+  })
+
+  const { data: postCountData } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: SocialFeedABI,
+    functionName: 'getPostCount',
   })
 
   const { data: profileData } = useReadContract({
@@ -112,17 +120,26 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black dark:from-gray-900 dark:via-gray-800 dark:to-black text-white flex items-center justify-center p-4 transition-colors duration-300 pt-20">
-      <div className="flex flex-col lg:flex-row gap-8 max-w-7xl">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 dark:from-gray-900 dark:via-gray-800 dark:to-black text-white flex items-center justify-center p-4 transition-colors duration-300 pt-20 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      </div>
+
+      <div className="flex flex-col lg:flex-row gap-8 max-w-7xl relative z-10">
         <div className="flex flex-col gap-4">
-          <Card className="w-full lg:w-[600px]">
-            <CardHeader>
+          <Card className="w-full lg:w-[600px] backdrop-blur-xl bg-white/10 dark:bg-black/30 border-white/20 shadow-2xl">
+            <CardHeader className="border-b border-white/10">
             <CardTitle className="flex items-center justify-between">
-                <span>ChainChat</span>
-                <Badge variant="secondary" className="text-xs">SDS Powered</Badge>
+                <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">ChainChat</span>
+                <Badge variant="secondary" className="text-xs bg-green-500/20 text-green-300 border-green-400/30 animate-pulse">
+                  <div className="w-1.5 h-1.5 bg-green-400 rounded-full mr-1.5"></div>
+                  SDS Live
+                </Badge>
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-6">
               {username && (
                 <div className="mb-6 p-3 bg-gray-800 dark:bg-gray-700 rounded-lg">
                   <div className="font-semibold text-white dark:text-gray-100">{username}</div>
@@ -196,13 +213,19 @@ export default function Home() {
                 </Dialog>
               </div>
 
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-gray-300">
                 Real-time social interactions powered by Somnia Data Streams. All posts, likes, and follows are stored immutably on-chain.
               </p>
             </CardContent>
           </Card>
+
+          {/* SDS Status Indicator */}
+          <SDSStatusIndicator 
+            isConnected={sdsConnected} 
+            postCount={postCountData ? Number(postCountData) : 0}
+          />
         </div>
-        <Feed refreshKey={refreshKey} />
+        <Feed refreshKey={refreshKey} onSDSStatusChange={setSdsConnected} />
       </div>
     </div>
   )
