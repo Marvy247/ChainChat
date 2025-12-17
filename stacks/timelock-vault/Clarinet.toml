@@ -1,0 +1,11 @@
+[project]
+name = "timelock-vault"
+description = "Time-locked savings vault with goals"
+authors = []
+telemetry = false
+cache_dir = "./.cache"
+requirements = []
+[contracts.timelock-vault]
+path = "contracts/timelock-vault.clar"
+clarity_version = 2
+epoch = 2.4
